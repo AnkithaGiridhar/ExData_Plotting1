@@ -1,0 +1,17 @@
+pc <- read.table("household_power_consumption.txt",sep = ";",skip = 66637, nrow = 2880)
+head(pc)
+colnames(pc, do.NULL = TRUE, prefix = "col")
+colnames(pc) <- c('Date','Time','Global_active_power','Global_reactive_power',
+                  'Voltage','Global_intensity','Sub_metering_1',
+                  'Sub_metering_2','Sub_metering_3')
+pc<-na.omit(pc)
+pc$DateTime <- paste(pc$Date, pc$Time, sep = " ")
+head(pc$DateTime)
+pc$DateTime <- strptime(pc$DateTime, "%d/%m/%Y %H:%M:%S")
+pc$Global_active_power<-as.numeric(pc$Global_active_power)
+png(file="plot3.png",width=480, height=480)
+with(pc,plot(DateTime,Sub_metering_1,type = "l",  ylab = 'Energy sub metering'))
+with(pc,lines(DateTime,Sub_metering_2,type = "l", col = "red"))
+with(pc,lines(DateTime,Sub_metering_3,type = "l", col = "blue"))
+legend(x = "topright", legend=c("Sub_metering_1", "Sub_metering_2", "Sub_metering_3"), col = c("black","blue","red"), lty = c(1,1,1))
+dev.off()
